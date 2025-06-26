@@ -44,7 +44,6 @@
 // the bitmask for selecting which cores to monitor
 #define HRP_PMC_CPU_SELECTION_MASK_BITS 256
 static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION_MASK_BITS / 64] = {
-static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION_MASK_BITS / 64] = {
     0b0000000000000000111111111111111111111111111111111111111111111111UL, // CPUs 63-0
     0b0000000000000000000000000000000000000000000000000000000000000000UL, // CPUs 127-64
     0b0000000000000000000000000000000000000000000000000000000000000000UL, // CPUs 191-128
@@ -85,9 +84,6 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 #define HRP_PMC_DEVICE_NAME "hrperf_device"
 #define HRP_PMC_CLASS_NAME "hrperf_class"
 #define HRP_PMC_IOC_MAGIC  'k'
-#define HRP_PMC_IOC_START       _IO(HRP_PMC_IOC_MAGIC, 1)
-#define HRP_PMC_IOC_PAUSE       _IO(HRP_PMC_IOC_MAGIC, 2)
-#define HRP_PMC_IOC_TSC_FREQ    _IOR(HRP_PMC_IOC_MAGIC, 10, u64)
 #define HRP_PMC_IOC_START       _IO(HRP_PMC_IOC_MAGIC, 1)
 #define HRP_PMC_IOC_PAUSE       _IO(HRP_PMC_IOC_MAGIC, 2)
 #define HRP_PMC_IOC_TSC_FREQ    _IOR(HRP_PMC_IOC_MAGIC, 10, u64)
