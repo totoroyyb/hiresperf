@@ -31,3 +31,4 @@
 /* offcore response events selector MSRs */
 #define MSR_OFFCORE_RSP0 0x000001A6
 #define MSR_OFFCORE_RSP1 0x000001A7
+#define MSR_OFFCORE_RSP2 0x000001A6

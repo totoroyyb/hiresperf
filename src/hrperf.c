@@ -72,6 +72,7 @@ static void hrperf_pmc_enable_and_esel(void *info) {
   wrmsrl(MSR_IA32_PERFEVTSEL1, PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_ARCH_FINAL);
   wrmsrl(MSR_OFFCORE_RSP1, PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_RSP_ARCH);
   wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_CYCLE_STALLS_MEM_SKYLAKE_FINAL);
+  wrmsrl(MSR_OFFCORE_RSP2, PMC_OCR_WRITE_ESTIMATE_MEMORY_SAPPHIRE_FINAL);
 }
 #else
 static void hrperf_pmc_enable_and_esel(void *info) {
@@ -86,6 +87,7 @@ static void hrperf_pmc_enable_and_esel(void *info) {
   wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_LLC_MISSES_FINAL);
   wrmsrl(MSR_IA32_PERFEVTSEL1, PMC_SW_PREFETCH_ANY_ARCH_FINAL);
   wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_CYCLE_STALLS_MEM_ARCH_FINAL);
+
 }
 #endif
 
@@ -104,6 +106,9 @@ static void hrperf_poller_func(void *info) {
   rdmsrl(MSR_IA32_FIXED_CTR1, entry.tick.cpu_unhalt);
   rdmsrl(MSR_IA32_PMC0, entry.tick.llc_misses);
   rdmsrl(MSR_IA32_PMC1, entry.tick.sw_prefetch);
+#ifdef HRP_USE_OFFCORE
+  rdmsrl(MSR_IA32_PMC3, entry.tick.write_estimate);
+#endif
 #ifdef HRP_LOG_IMC
   if (entry.cpu_id == HRP_IMC_DATA_ASSOCIATED_CORE) {
     freeze_all_counters();

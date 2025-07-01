@@ -13,6 +13,9 @@ typedef struct {
     unsigned long long cpu_unhalt;
     unsigned long long llc_misses;
     unsigned long long sw_prefetch;
+#ifdef HRP_USE_OFFCORE
+    unsigned long long write_estimate;
+#endif
 #ifdef HRP_LOG_IMC
     unsigned long long imc_reads;
     unsigned long long imc_writes;
