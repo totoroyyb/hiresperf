@@ -6,7 +6,7 @@
 */
 
 // the size for each core's PMC evnets buffer for poller/logger
-#define HRP_PMC_BUFFER_SIZE 50000
+#define HRP_PMC_BUFFER_SIZE 2048
 
 // the poller thread will sleep for this interval, in microseconds
 #define HRP_PMC_POLL_INTERVAL_US_LOW 50
@@ -71,6 +71,7 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 
 #define HRP_USE_OFFCORE 1 // set to 1 for using offcore reads/writes PMUs, 0 for using cache-miss/prefetch PMUs
 #define HRP_LOG_IMC     1 // set to 1 to log IMC uncore PMU events, 0 to disable
+#define HRP_USE_WRITE_EST 1 // set to 1 to use write estimation PMU events, 0 to disable
 
 // Specify which core the IMC event will be stored at.
 // when logging the IMC events, we only log the total reads/writes numbers to one core.
