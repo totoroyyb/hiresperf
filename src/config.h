@@ -6,11 +6,11 @@
 */
 
 // the size for each core's PMC evnets buffer for poller/logger
-#define HRP_PMC_BUFFER_SIZE 2048
+#define HRP_PMC_BUFFER_SIZE 4096
 
 // the poller thread will sleep for this interval, in microseconds
-#define HRP_PMC_POLL_INTERVAL_US_LOW 50
-#define HRP_PMC_POLL_INTERVAL_US_HIGH 60
+#define HRP_PMC_POLL_INTERVAL_US_LOW 20
+#define HRP_PMC_POLL_INTERVAL_US_HIGH 25
 
 // how many rounds of PMC polling before each logging
 #define HRP_PMC_POLLING_LOGGING_RATIO 5
@@ -24,11 +24,11 @@
 // When enabled, all poller functions across all CPUs will use a barrier 
 // to synchronize the start. Therefore, this mechanism can maximally 
 // reduce the time difference across PMU polling on different CPUs.
-#define HRP_STRICT_POLLING_SYNC 1
+#define HRP_STRICT_POLLING_SYNC 0
 
 // Set to 1 to also poll the PMUs on the core where the poller job is executed.
 // If set to 0, the poller core will not poll its own PMUs.
-#define HRP_POLL_POLLER_CORE 1
+#define HRP_POLL_POLLER_CORE 0
 
 // set to 1 for ktime_get_raw(), 0 for ktime_get_real()
 // LDB timestamps use the raw clock, also corresponding to perf sched record -k CLOCK_MONOTONIC_RAW
@@ -77,7 +77,7 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 #define HRP_ARCH_NAME SAPPHIRE
 
 #define HRP_USE_OFFCORE 1 // set to 1 for using offcore reads/writes PMUs, 0 for using cache-miss/prefetch PMUs
-#define HRP_LOG_IMC     1 // set to 1 to log IMC uncore PMU events, 0 to disable
+#define HRP_LOG_IMC     0 // set to 1 to log IMC uncore PMU events, 0 to disable
 #define HRP_USE_WRITE_EST 1 // set to 1 to use write estimation PMU events, 0 to disable
 
 // Specify which core the IMC event will be stored at.
