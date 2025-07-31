@@ -125,7 +125,7 @@ static void hrperf_poller_func(void *info) {
   atomic_inc(&ready_cpus);
   
   // Wait for all CPUs to be ready with timeout
-  unsigned long timeout = jiffies + msecs_to_jiffies(50);
+  unsigned long timeout = jiffies + msecs_to_jiffies(150);
   while (!atomic_read(&start_flag)) {
     if (time_after(jiffies, timeout)) {
       pr_err("hrperf: Timeout waiting for start flag on CPU %d\n", smp_processor_id());
