@@ -24,11 +24,11 @@
 // When enabled, all poller functions across all CPUs will use a barrier 
 // to synchronize the start. Therefore, this mechanism can maximally 
 // reduce the time difference across PMU polling on different CPUs.
-#define HRP_STRICT_POLLING_SYNC 0
+#define HRP_STRICT_POLLING_SYNC 1
 
 // Set to 1 to also poll the PMUs on the core where the poller job is executed.
 // If set to 0, the poller core will not poll its own PMUs.
-#define HRP_POLL_POLLER_CORE 0
+#define HRP_POLL_POLLER_CORE 1
 
 // set to 1 for ktime_get_raw(), 0 for ktime_get_real()
 // LDB timestamps use the raw clock, also corresponding to perf sched record -k CLOCK_MONOTONIC_RAW
@@ -80,10 +80,12 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 #define HRP_LOG_IMC     0 // set to 1 to log IMC uncore PMU events, 0 to disable
 #define HRP_USE_WRITE_EST 1 // set to 1 to use write estimation PMU events, 0 to disable
 
+#define HRP_USE_CACHE_MISS_PMU 1
+
 // Specify which core the IMC event will be stored at.
 // when logging the IMC events, we only log the total reads/writes numbers to one core.
 // other cores will have zero values for IMC events.
-#define HRP_IMC_DATA_ASSOCIATED_CORE 0
+#define HRP_IMC_DATA_ASSOCIATED_CORE 1
 
 // DO NOT EDIT! These will be composed with the above HRP_ARCH_NAME
 // Helper macros for proper token pasting
@@ -95,6 +97,9 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 #define PMC_OCR_READS_TO_CORE_DRAM_RSP_ARCH            PMC_PASTE(PMC_OCR_READS_TO_CORE_DRAM_RSP_, HRP_ARCH_NAME, )
 #define PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_ARCH_FINAL PMC_PASTE(PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_, HRP_ARCH_NAME, _FINAL)
 #define PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_RSP_ARCH   PMC_PASTE(PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_RSP_, HRP_ARCH_NAME, )
+
+
+
 // Cache-miss and prefetch macros
 #define PMC_SW_PREFETCH_ANY_ARCH_FINAL                 PMC_PASTE(PMC_SW_PREFETCH_ANY_, HRP_ARCH_NAME, _FINAL)
 #define PMC_CYCLE_STALLS_MEM_ARCH_FINAL                PMC_PASTE(PMC_CYCLE_STALLS_MEM_, HRP_ARCH_NAME, _FINAL)

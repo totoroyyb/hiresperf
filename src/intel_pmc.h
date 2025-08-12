@@ -30,6 +30,15 @@
 #define PMC_ARCH_BRANCHES       PMC_ESEL_ENTRY(0xC4, 0x00, 0)
 #define PMC_ARCH_BRANCH_MISSES  PMC_ESEL_ENTRY(0xC5, 0x00, 0)
 
+/* 
+        new counters to explore instruction fetching
+*/
+
+#define PMC_ARCH_L1I_MISS       PMC_ESEL_ENTRY(0xC6, 0x01, 0) // frontend, need MSR_PEBS_FRONTEND, can swap to L2 Instruction Cache Miss
+#define PMC_ARCH_L1D_MISS_ANY   PMC_ESEL_ENTRY(0x43, 0xFD, 0)
+#define PMC_ARCH_L2_HWPF        PMC_ESEL_ENTRY(0x24, 0xF0, 0)
+
+
 /*
         non-architectural core pmcs has different selecto definitions for each microarchitecture
 */
@@ -45,8 +54,15 @@
 
 /* 
         offcore events, varys a lot from one chip to another.
+        if HRP_USE_CACHE_MISS_PMU is set, these will be used for cache-miss/prefetch PMUs
 */
 /* Sapphire Rapids */
+
+#define PMC_OCR_L1D_HWPF_SAPPHIRE                               PMC_ESEL_ENTRY(0x2A, 0x01, 0) // offcore, need offcore response register
+#define PMC_OCR_L1D_HWPF_RSP_SAPPHIRE                           0x0000000000010400 // offcore response register value for L1D HW prefetch
+#define PMC_OCR_L3_HWPF_SAPPHIRE                                PMC_ESEL_ENTRY(0x2B, 0x01, 0) // offcore, need offcore response register
+#define PMC_OCR_L3_HWPF_RSP_SAPPHIRE                            0x0000000000012380 // offcore response register value for L3 HW prefetch
+
 #define PMC_OCR_READS_TO_CORE_DRAM_SAPPHIRE                     PMC_ESEL_ENTRY(0x2A, 0x01, 0)
 #define PMC_OCR_READS_TO_CORE_DRAM_RSP_SAPPHIRE                 0x000000073C004477
 #define PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_SAPPHIRE            PMC_ESEL_ENTRY(0x2B, 0x01, 0)
@@ -55,6 +71,9 @@
 #else
         #define PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_RSP_SAPPHIRE        0x0000000000010808
 #endif
+
+
+
 /* Final composed 64 bit to put into esel register */
 /* Architectural */
 #define PMC_LLC_MISSES_FINAL (PMC_ARCH_LLC_MISSES | PMC_ESEL_USR | PMC_ESEL_OS | \
@@ -77,6 +96,14 @@
                         PMC_ESEL_ENABLE)
 #define PMC_CYCLE_STALLS_MEM_SAPPHIRE_FINAL (PMC_CYCLE_STALLS_MEM_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
+
+
+/* Offcore */
+#define PMC_OCR_L1D_HWPF_SAPPHIRE_FINAL (PMC_OCR_L1D_HWPF_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_OCR_L3_HWPF_SAPPHIRE_FINAL (PMC_OCR_L3_HWPF_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+
 #define PMC_OCR_READS_TO_CORE_DRAM_SAPPHIRE_FINAL (PMC_OCR_READS_TO_CORE_DRAM_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 #define PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_SAPPHIRE_FINAL (PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
