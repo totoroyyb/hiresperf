@@ -35,13 +35,25 @@
 */
 /* Skylake */
 #define PMC_SW_PREFETCH_ANY_SKYLAKE             PMC_ESEL_ENTRY(0x32, 0x0F, 0)
-#define PMC_CYCLE_STALLS_MEM_SKYLAKE           PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
+#if HRP_USE_NEW_STALL
+        #define PMC_CYCLE_STALLS_MEM_SKYLAKE           PMC_ESEL_ENTRY(0xA3, 0x10, 0x10)
+#else
+        #define PMC_CYCLE_STALLS_MEM_SKYLAKE           PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
+#endif
 /* Ice Lake */
 #define PMC_SW_PREFETCH_ANY_ICELAKE             PMC_ESEL_ENTRY(0x32, 0x0F, 0)
-#define PMC_CYCLE_STALLS_MEM_ICELAKE           PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
+#if HRP_USE_NEW_STALL
+        #define PMC_CYCLE_STALLS_MEM_ICELAKE           PMC_ESEL_ENTRY(0xA3, 0x10, 0x10)
+#else
+        #define PMC_CYCLE_STALLS_MEM_ICELAKE           PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
+#endif
 /* Sapphire Rapids */
 #define PMC_SW_PREFETCH_ANY_SAPPHIRE            PMC_ESEL_ENTRY(0x40, 0x0F, 0)
-#define PMC_CYCLE_STALLS_MEM_SAPPHIRE          PMC_ESEL_ENTRY(0xA3, 0x14, 0x14) // not listed in PerfMon Events doc
+#if HRP_USE_NEW_STALL
+        #define PMC_CYCLE_STALLS_MEM_SAPPHIRE          PMC_ESEL_ENTRY(0xA3, 0x10, 0x10)
+#else
+        #define PMC_CYCLE_STALLS_MEM_SAPPHIRE          PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
+#endif
 
 /* 
         offcore events, varys a lot from one chip to another.

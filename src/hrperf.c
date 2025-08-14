@@ -373,8 +373,6 @@ enqueue_instructed_profile_op(instructed_profile_func_t func) {
     }
     queue_work_on(HRP_PMC_POLLER_CPU, instructed_profile_wq, work);
     flush_work(work);
-    printk(KERN_INFO
-           "hrperf: Instructed profiling - single poll and log done\n");
   } else {
     pr_warn(
         "hrperf: Instructed profiling is not enabled. INSTRUCTED_POLL_AND_LOG "
