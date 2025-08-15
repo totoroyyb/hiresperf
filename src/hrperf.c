@@ -105,6 +105,7 @@ static void hrperf_pmc_enable_and_esel(void *info) {
   wrmsrl(MSR_IA32_PERFEVTSEL1, PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_ARCH_FINAL);
   wrmsrl(MSR_OFFCORE_RSP1, PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_RSP_ARCH);
   wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_CYCLE_STALLS_MEM_SKYLAKE_FINAL);
+  wrmsrl(MSR_IA32_PERFEVTSEL3, PMC_STALLS_SB_ANY_ARCH_FINAL);
 }
 #else
 static void hrperf_pmc_enable_and_esel(void *info) {
@@ -119,6 +120,7 @@ static void hrperf_pmc_enable_and_esel(void *info) {
   wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_LLC_MISSES_FINAL);
   wrmsrl(MSR_IA32_PERFEVTSEL1, PMC_SW_PREFETCH_ANY_ARCH_FINAL);
   wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_CYCLE_STALLS_MEM_ARCH_FINAL);
+  wrmsrl(MSR_IA32_PERFEVTSEL3, PMC_STALLS_SB_ANY_ARCH_FINAL);
 }
 #endif
 
@@ -148,6 +150,7 @@ static void hrperf_poller_func(void *info) {
   entry.tick.kts = data->kts;
   rdmsrl(MSR_IA32_PMC2, entry.tick.stall_mem);
   rdmsrl(MSR_IA32_FIXED_CTR0, entry.tick.inst_retire);
+  rdmsrl(MSR_IA32_PMC3, entry.tick.stalls_sb);
   rdmsrl(MSR_IA32_FIXED_CTR1, entry.tick.cpu_unhalt);
   rdmsrl(MSR_IA32_PMC0, entry.tick.llc_misses);
   rdmsrl(MSR_IA32_PMC1, entry.tick.sw_prefetch);

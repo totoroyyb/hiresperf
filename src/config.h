@@ -108,6 +108,7 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 // Cache-miss and prefetch macros
 #define PMC_SW_PREFETCH_ANY_ARCH_FINAL                 PMC_PASTE(PMC_SW_PREFETCH_ANY_, HRP_ARCH_NAME, _FINAL)
 #define PMC_CYCLE_STALLS_MEM_ARCH_FINAL                PMC_PASTE(PMC_CYCLE_STALLS_MEM_, HRP_ARCH_NAME, _FINAL)
+#define PMC_STALLS_SB_ANY_ARCH_FINAL                   PMC_PASTE(PMC_STALLS_SB_ANY_, HRP_ARCH_NAME, _FINAL)
 
 /*
     Device Configurations

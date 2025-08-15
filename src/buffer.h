@@ -10,6 +10,7 @@ typedef struct {
     u64 kts;
     unsigned long long stall_mem;
     unsigned long long inst_retire;
+    unsigned long long stalls_sb;
     unsigned long long cpu_unhalt;
     unsigned long long llc_misses;
     unsigned long long sw_prefetch;

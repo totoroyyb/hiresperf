@@ -40,6 +40,7 @@
 #else
         #define PMC_CYCLE_STALLS_MEM_SKYLAKE           PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
 #endif
+#define PMC_STALLS_SB_ANY_SKYLAKE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
 /* Ice Lake */
 #define PMC_SW_PREFETCH_ANY_ICELAKE             PMC_ESEL_ENTRY(0x32, 0x0F, 0)
 #if HRP_USE_NEW_STALL
@@ -47,6 +48,7 @@
 #else
         #define PMC_CYCLE_STALLS_MEM_ICELAKE           PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
 #endif
+#define PMC_STALLS_SB_ANY_ICELAKE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
 /* Sapphire Rapids */
 #define PMC_SW_PREFETCH_ANY_SAPPHIRE            PMC_ESEL_ENTRY(0x40, 0x0F, 0)
 #if HRP_USE_NEW_STALL
@@ -54,6 +56,7 @@
 #else
         #define PMC_CYCLE_STALLS_MEM_SAPPHIRE          PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
 #endif
+#define PMC_STALLS_SB_ANY_SAPPHIRE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
 
 /* 
         offcore events, varys a lot from one chip to another.
@@ -77,17 +80,23 @@
 			PMC_ESEL_ENABLE)
 #define PMC_CYCLE_STALLS_MEM_SKYLAKE_FINAL (PMC_CYCLE_STALLS_MEM_SKYLAKE  | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
+#define PMC_STALLS_SB_ANY_SKYLAKE_FINAL (PMC_STALLS_SB_ANY_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
 
 /* Ice Lake */
 #define PMC_SW_PREFETCH_ANY_ICELAKE_FINAL (PMC_SW_PREFETCH_ANY_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 #define PMC_CYCLE_STALLS_MEM_ICELAKE_FINAL (PMC_CYCLE_STALLS_MEM_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
+#define PMC_STALLS_SB_ANY_ICELAKE_FINAL (PMC_STALLS_SB_ANY_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
 
 /* Sapphire Rapids */
 #define PMC_SW_PREFETCH_ANY_SAPPHIRE_FINAL (PMC_SW_PREFETCH_ANY_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 #define PMC_CYCLE_STALLS_MEM_SAPPHIRE_FINAL (PMC_CYCLE_STALLS_MEM_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_SB_ANY_SAPPHIRE_FINAL (PMC_STALLS_SB_ANY_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 #define PMC_OCR_READS_TO_CORE_DRAM_SAPPHIRE_FINAL (PMC_OCR_READS_TO_CORE_DRAM_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)

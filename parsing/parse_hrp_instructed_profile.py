@@ -21,6 +21,7 @@ class TimeRangeData:
     duration_ms: float
     stall_mem_diff: int
     inst_retire_diff: int
+    stalls_sb_diff: int
     cpu_unhalt_diff: int
     c1_diff: int
     c2_diff: int
@@ -46,6 +47,7 @@ def read_logs_to_numpy(file_path: str) -> np.ndarray:
             ('timestamp', np.uint64),
             ('stall_mem', np.uint64),
             ('inst_retire', np.uint64),
+            ('stalls_sb', np.uint64),
             ('cpu_unhalt', np.uint64),
             (f'{c1_name}', np.uint64),
             (f'{c2_name}', np.uint64),
@@ -58,6 +60,7 @@ def read_logs_to_numpy(file_path: str) -> np.ndarray:
             ('timestamp', np.uint64),
             ('stall_mem', np.uint64),
             ('inst_retire', np.uint64),
+            ('stalls_sb', np.uint64),
             ('cpu_unhalt', np.uint64),
             (f'{c1_name}', np.uint64),
             (f'{c2_name}', np.uint64),
@@ -88,7 +91,7 @@ def calc_data_in_range(time_range: tuple[int, int], df: pd.DataFrame) -> TimeRan
     assert len(df_range["timestamp"].unique()) == 2, "Must have two timestamps per range"
 
     t_min, t_max = df_range['timestamp'].min(), df_range['timestamp'].max()
-    cols = ['cpu_id', 'stall_mem', 'inst_retire', 'cpu_unhalt', f'{c1_name}', f'{c2_name}']
+    cols = ['cpu_id', 'stall_mem', 'inst_retire', 'stalls_sb', 'cpu_unhalt', f'{c1_name}', f'{c2_name}']
     df_start = df[df['timestamp'] == t_min][cols]
     df_end = df[df['timestamp'] == t_max][cols]
 
@@ -97,6 +100,7 @@ def calc_data_in_range(time_range: tuple[int, int], df: pd.DataFrame) -> TimeRan
         'cpu_id': merged['cpu_id'],
         'stall_mem_diff': merged['stall_mem_end'] - merged['stall_mem_start'],
         'inst_retire_diff': merged['inst_retire_end'] - merged['inst_retire_start'],
+        'stalls_sb_diff': merged['stalls_sb_end'] - merged['stalls_sb_start'],
         'cpu_unhalt_diff': merged['cpu_unhalt_end'] - merged['cpu_unhalt_start'],
         f'{c1_diff_name}': merged[f'{c1_name}_end'] - merged[f'{c1_name}_start'],
         f'{c2_diff_name}': merged[f'{c2_name}_end'] - merged[f'{c2_name}_start'],
@@ -109,6 +113,7 @@ def calc_data_in_range(time_range: tuple[int, int], df: pd.DataFrame) -> TimeRan
         duration_ms=(t_max - t_min) / args.tsc_freq / 1e3,
         stall_mem_diff=diff['stall_mem_diff'].sum(),
         inst_retire_diff=diff['inst_retire_diff'].sum(),
+        stalls_sb_diff=diff['stalls_sb_diff'].sum(),
         cpu_unhalt_diff=diff['cpu_unhalt_diff'].sum(),
         c1_diff=diff[c1_diff_name].sum(),
         c2_diff=diff[c2_diff_name].sum(),
@@ -143,6 +148,7 @@ def print_avg_time_ranges_data(data_list: list[TimeRangeData]):
     print(f"Avg Duration (ms): {avg('duration_ms'):.2f}")
     print(f"Avg stall_mem diff: {avg('stall_mem_diff')}")
     print(f"Avg inst_retire diff: {avg('inst_retire_diff')}")
+    print(f"Avg stalls_sb diff: {avg('stalls_sb_diff')}")
     print(f"Avg cpu_unhalt diff: {avg('cpu_unhalt_diff')}")
     print(f"Avg {c1_name} diff: {avg('c1_diff')}")
     print(f"Avg {c2_name} diff: {avg('c2_diff')}")
