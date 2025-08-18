@@ -156,6 +156,10 @@ def print_avg_time_ranges_data(data_list: list[TimeRangeData]):
     print(f"Avg IMC read diff: {avg('imc_read_diff')}")
     print(f"Avg IMC write diff: {avg('imc_write_diff')}")
     print(f"Avg IMC total transferred ((read+write)*64): {(avg('imc_read_diff') + avg('imc_write_diff')) * 64 / 1e6:.2f} MB")
+    print(f"Avg load mem cycle stall ratio: {avg('stall_mem_diff') / avg('cpu_unhalt_diff'):.2f}")
+    print(f"Avg total mem cycle stall: {avg('stall_mem_diff') + avg('stalls_sb_diff')}")
+    print(f"Avg total mem cycle stall ratio: {(avg('stall_mem_diff') + avg('stalls_sb_diff')) / avg('cpu_unhalt_diff'):.2f}")
+    print(f"Avg total instruction ratio: {(avg('inst_retire_diff') / avg('cpu_unhalt_diff')):.2f}")
 
 def main():
     if args.use_imc: print("Using IMC")
