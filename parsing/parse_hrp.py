@@ -39,13 +39,16 @@ def read_logs_to_numpy(
     use_rdt: bool = False,
     use_rdt_local_bw: bool = False,
 ) -> np.ndarray:
-    # Base fields: cpu_id, timestamp, stall_mem, inst_retire, stalls_sb, cpu_unhalt, llc_misses, sw_prefetch
+    # Base fields: cpu_id, timestamp, stall_mem, inst_retire, stalls_sb, stalls_total, bound_on_loads, bound_on_stores, cpu_unhalt, llc_misses, sw_prefetch
     fields = [
         ("cpu_id", np.int32),
         ("timestamp", np.uint64),
         ("stall_mem", np.uint64),
         ("inst_retire", np.uint64),
         ("stalls_sb", np.uint64),
+        ("stalls_total", np.uint64),
+        ("bound_on_loads", np.uint64),
+        ("bound_on_stores", np.uint64),
         ("cpu_unhalt", np.uint64),
         ("llc_misses", np.uint64),
         ("sw_prefetch", np.uint64),
@@ -101,6 +104,9 @@ def create_tables(
                         stalls_per_us DOUBLE,
                         inst_retire_rate DOUBLE,
                         stalls_sb_rate DOUBLE,
+                        stalls_total_rate DOUBLE,
+                        bound_on_loads_rate DOUBLE,
+                        bound_on_stores_rate DOUBLE,
                         cpu_usage DOUBLE,
                         offcore_read_rate DOUBLE,
                         write_estimate_rate DOUBLE,
@@ -109,6 +115,9 @@ def create_tables(
                         stall_mem UBIGINT,
                         inst_retire UBIGINT,
                         stalls_sb UBIGINT,
+                        stalls_total UBIGINT,
+                        bound_on_loads UBIGINT,
+                        bound_on_stores UBIGINT,
                         cpu_unhalt UBIGINT,
                         offcore_read UBIGINT,
                         write_estimate UBIGINT
@@ -134,6 +143,9 @@ def create_tables(
                         stalls_per_us DOUBLE,
                         inst_retire_rate DOUBLE,
                         stalls_sb_rate DOUBLE,
+                        stalls_total_rate DOUBLE,
+                        bound_on_loads_rate DOUBLE,
+                        bound_on_stores_rate DOUBLE,
                         cpu_usage DOUBLE,
                         offcore_read_rate DOUBLE,
                         offcore_write_rate DOUBLE,
@@ -142,6 +154,9 @@ def create_tables(
                         stall_mem UBIGINT,
                         inst_retire UBIGINT,
                         stalls_sb UBIGINT,
+                        stalls_total UBIGINT,
+                        bound_on_loads UBIGINT,
+                        bound_on_stores UBIGINT,
                         cpu_unhalt UBIGINT,
                         offcore_read UBIGINT,
                         offcore_write UBIGINT
@@ -167,6 +182,9 @@ def create_tables(
                     stalls_per_us DOUBLE,
                     inst_retire_rate DOUBLE,
                     stalls_sb_rate DOUBLE,
+                    stalls_total_rate DOUBLE,
+                    bound_on_loads_rate DOUBLE,
+                    bound_on_stores_rate DOUBLE,
                     cpu_usage DOUBLE,
                     llc_misses_rate DOUBLE,
                     sw_prefetch_rate DOUBLE,
@@ -175,6 +193,9 @@ def create_tables(
                     stall_mem UBIGINT,
                     inst_retire UBIGINT,
                     stalls_sb UBIGINT,
+                    stalls_total UBIGINT,
+                    bound_on_loads UBIGINT,
+                    bound_on_stores UBIGINT,
                     cpu_unhalt UBIGINT,
                     llc_misses UBIGINT,
                     sw_prefetch UBIGINT
@@ -202,6 +223,9 @@ def create_tables(
                         stalls_per_us DOUBLE,
                         inst_retire_rate DOUBLE,
                         stalls_sb_rate DOUBLE,
+                        stalls_total_rate DOUBLE,
+                        bound_on_loads_rate DOUBLE,
+                        bound_on_stores_rate DOUBLE,
                         cpu_usage DOUBLE,
                         offcore_read_rate DOUBLE,
                         write_estimate_rate DOUBLE,
@@ -229,6 +253,9 @@ def create_tables(
                         stalls_per_us DOUBLE,
                         inst_retire_rate DOUBLE,
                         stalls_sb_rate DOUBLE,
+                        stalls_total_rate DOUBLE,
+                        bound_on_loads_rate DOUBLE,
+                        bound_on_stores_rate DOUBLE,
                         cpu_usage DOUBLE,
                         offcore_read_rate DOUBLE,
                         offcore_write_rate DOUBLE,
@@ -256,6 +283,9 @@ def create_tables(
                     stalls_per_us DOUBLE,
                     inst_retire_rate DOUBLE,
                     stalls_sb_rate DOUBLE,
+                    stalls_total_rate DOUBLE,
+                    bound_on_loads_rate DOUBLE,
+                    bound_on_stores_rate DOUBLE,
                     cpu_usage DOUBLE,
                     llc_misses_rate DOUBLE,
                     sw_prefetch_rate DOUBLE,
@@ -333,6 +363,9 @@ def parse_hrperf_log_polars(
         pl.col("stall_mem").shift(1).over("cpu_id").alias("prev_stall_mem"),
         pl.col("inst_retire").shift(1).over("cpu_id").alias("prev_inst_retire"),
         pl.col("stalls_sb").shift(1).over("cpu_id").alias("prev_stalls_sb"),
+        pl.col("stalls_total").shift(1).over("cpu_id").alias("prev_stalls_total"),
+        pl.col("bound_on_loads").shift(1).over("cpu_id").alias("prev_bound_on_loads"),
+        pl.col("bound_on_stores").shift(1).over("cpu_id").alias("prev_bound_on_stores"),
         pl.col("cpu_unhalt").shift(1).over("cpu_id").alias("prev_cpu_unhalt"),
         pl.col("llc_misses").shift(1).over("cpu_id").alias("prev_llc_misses"),
         pl.col("sw_prefetch").shift(1).over("cpu_id").alias("prev_sw_prefetch"),
@@ -362,6 +395,12 @@ def parse_hrperf_log_polars(
         / pl.col("time_delta_us"),
         stalls_sb_rate=(pl.col("stalls_sb") - pl.col("prev_stalls_sb"))
         / pl.col("time_delta_us"),
+        stalls_total_rate=(pl.col("stalls_total") - pl.col("prev_stalls_total"))
+        / pl.col("time_delta_us"),
+        bound_on_loads_rate=(pl.col("bound_on_loads") - pl.col("prev_bound_on_loads"))
+        / pl.col("time_delta_us"),
+        bound_on_stores_rate=(pl.col("bound_on_stores") - pl.col("prev_bound_on_stores"))
+        / pl.col("time_delta_us"),
         cpu_usage=(pl.col("cpu_unhalt") - pl.col("prev_cpu_unhalt"))
         / (tsc_per_us * pl.col("time_delta_us")),
         llc_misses_rate=(pl.col("llc_misses") - pl.col("prev_llc_misses"))
@@ -382,6 +421,9 @@ def parse_hrperf_log_polars(
         "stalls_per_us",
         "inst_retire_rate",
         "stalls_sb_rate",
+        "stalls_total_rate",
+        "bound_on_loads_rate",
+        "bound_on_stores_rate",
         "cpu_usage",
         "llc_misses_rate",
         "sw_prefetch_rate",
@@ -390,7 +432,7 @@ def parse_hrperf_log_polars(
     ]
     if use_raw:
         final_cols.extend(
-            ["stall_mem", "inst_retire", "stalls_sb", "cpu_unhalt", "llc_misses", "sw_prefetch"]
+            ["stall_mem", "inst_retire", "stalls_sb", "stalls_total", "bound_on_loads", "bound_on_stores", "cpu_unhalt", "llc_misses", "sw_prefetch"]
         )
         if use_imc:
             final_cols.extend(["imc_read", "imc_write"])
