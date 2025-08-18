@@ -37,10 +37,18 @@
 #define PMC_SW_PREFETCH_ANY_SKYLAKE             PMC_ESEL_ENTRY(0x32, 0x0F, 0)
 #if HRP_USE_NEW_STALL
         #define PMC_CYCLE_STALLS_MEM_SKYLAKE           PMC_ESEL_ENTRY(0xA3, 0x10, 0x10)
+#elif HRP_USE_STALL_TOTAL
+        #define PMC_CYCLE_STALLS_MEM_SKYLAKE           PMC_ESEL_ENTRY(0xA3, 0x04, 0x04)
 #else
         #define PMC_CYCLE_STALLS_MEM_SKYLAKE           PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
 #endif
-#define PMC_STALLS_SB_ANY_SKYLAKE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
+
+#if HRP_USE_BOUND_ON_LOADS
+        #define PMC_STALLS_SB_ANY_SKYLAKE                           PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
+#else
+        #define PMC_STALLS_SB_ANY_SKYLAKE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
+#endif
+
 #define PMC_STALLS_TOTAL_SKYLAKE                            PMC_ESEL_ENTRY(0xA3, 0x04, 0x04)
 #define PMC_BOUND_ON_LOADS_SKYLAKE                          PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
 #define PMC_BOUND_ON_STORES_SKYLAKE                         PMC_ESEL_ENTRY(0xA6, 0x40, 0x02)
@@ -48,10 +56,17 @@
 #define PMC_SW_PREFETCH_ANY_ICELAKE             PMC_ESEL_ENTRY(0x32, 0x0F, 0)
 #if HRP_USE_NEW_STALL
         #define PMC_CYCLE_STALLS_MEM_ICELAKE           PMC_ESEL_ENTRY(0xA3, 0x10, 0x10)
+#elif HRP_USE_STALL_TOTAL
+        #define PMC_CYCLE_STALLS_MEM_ICELAKE           PMC_ESEL_ENTRY(0xA3, 0x04, 0x04)
 #else
         #define PMC_CYCLE_STALLS_MEM_ICELAKE           PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
 #endif
-#define PMC_STALLS_SB_ANY_ICELAKE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
+
+#if HRP_USE_BOUND_ON_LOADS
+        #define PMC_STALLS_SB_ANY_ICELAKE                           PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
+#else
+        #define PMC_STALLS_SB_ANY_ICELAKE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
+#endif
 #define PMC_STALLS_TOTAL_ICELAKE                            PMC_ESEL_ENTRY(0xA3, 0x04, 0x04)
 #define PMC_BOUND_ON_LOADS_ICELAKE                          PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
 #define PMC_BOUND_ON_STORES_ICELAKE                         PMC_ESEL_ENTRY(0xA6, 0x40, 0x02)
@@ -59,10 +74,17 @@
 #define PMC_SW_PREFETCH_ANY_SAPPHIRE            PMC_ESEL_ENTRY(0x40, 0x0F, 0)
 #if HRP_USE_NEW_STALL
         #define PMC_CYCLE_STALLS_MEM_SAPPHIRE          PMC_ESEL_ENTRY(0xA3, 0x10, 0x10)
+#elif HRP_USE_STALL_TOTAL
+        #define PMC_CYCLE_STALLS_MEM_SAPPHIRE          PMC_ESEL_ENTRY(0xA3, 0x04, 0x04) 
 #else
         #define PMC_CYCLE_STALLS_MEM_SAPPHIRE          PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
 #endif
-#define PMC_STALLS_SB_ANY_SAPPHIRE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
+
+#if HRP_USE_BOUND_ON_LOADS
+        #define PMC_STALLS_SB_ANY_SAPPHIRE                           PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
+#else
+        #define PMC_STALLS_SB_ANY_SAPPHIRE                           PMC_ESEL_ENTRY(0xA2, 0x08, 0)
+#endif
 #define PMC_STALLS_TOTAL_SAPPHIRE                            PMC_ESEL_ENTRY(0xA3, 0x04, 0x04)
 #define PMC_BOUND_ON_LOADS_SAPPHIRE                          PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
 #define PMC_BOUND_ON_STORES_SAPPHIRE                         PMC_ESEL_ENTRY(0xA6, 0x40, 0x02)
