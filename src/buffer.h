@@ -11,7 +11,7 @@ typedef struct {
     unsigned long long stall_mem;
     unsigned long long inst_retire;
     unsigned long long stalls_sb;
-    unsigned long long stall_total;
+    unsigned long long stalls_total;
     unsigned long long bound_on_loads;
     unsigned long long bound_on_stores;
     unsigned long long cpu_unhalt;
