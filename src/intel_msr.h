@@ -23,16 +23,10 @@
 #define MSR_IA32_PERFEVTSEL1 0x00000187
 #define MSR_IA32_PERFEVTSEL2 0x00000188
 #define MSR_IA32_PERFEVTSEL3 0x00000189
-#define MSR_IA32_PERFEVTSEL4 0x0000018a // available on sapphire machine
-#define MSR_IA32_PERFEVTSEL5 0x0000018b
-#define MSR_IA32_PERFEVTSEL6 0x0000018c
 #define MSR_IA32_PMC0 0x000000c1
 #define MSR_IA32_PMC1 0x000000c2
 #define MSR_IA32_PMC2 0x000000c3 // available since Arch PMC V3
 #define MSR_IA32_PMC3 0x000000c4
-#define MSR_IA32_PMC4 0x000000c5 // available on sapphire machine
-#define MSR_IA32_PMC5 0x000000c6
-#define MSR_IA32_PMC6 0x000000c7
 
 /* offcore response events selector MSRs */
 #define MSR_OFFCORE_RSP0 0x000001A6

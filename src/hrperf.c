@@ -100,15 +100,24 @@ static void hrperf_pmc_enable_and_esel(void *info) {
                                    (1UL << 33)); // arch 0,1,2,3, fixed 0,1
 
   // make event selections and offcore response selections
+#if HRP_USE_STALL_TOTAL
+  wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_STALLS_TOTAL_ARCH_FINAL);
+#else
   wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_OCR_READS_TO_CORE_DRAM_ARCH_FINAL);
+#endif
   wrmsrl(MSR_OFFCORE_RSP0, PMC_OCR_READS_TO_CORE_DRAM_RSP_ARCH);
   wrmsrl(MSR_IA32_PERFEVTSEL1, PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_ARCH_FINAL);
   wrmsrl(MSR_OFFCORE_RSP1, PMC_OCR_MODIFIED_WRITE_ANY_RESPONSE_RSP_ARCH);
+#if HRP_USE_BOUND_ON_LOADS
+  wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_BOUND_ON_LOADS_ARCH_FINAL);
+#else
   wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_CYCLE_STALLS_MEM_SKYLAKE_FINAL);
+#endif
+#if HRP_USE_BOUND_ON_STORES
+  wrmsrl(MSR_IA32_PERFEVTSEL3, PMC_BOUND_ON_STORES_ARCH_FINAL);
+#else
   wrmsrl(MSR_IA32_PERFEVTSEL3, PMC_STALLS_SB_ANY_ARCH_FINAL);
-  wrmsrl(MSR_IA32_PERFEVTSEL4, PMC_STALLS_TOTAL_ARCH_FINAL);
-  wrmsrl(MSR_IA32_PERFEVTSEL5, PMC_BOUND_ON_LOADS_ARCH_FINAL);
-  wrmsrl(MSR_IA32_PERFEVTSEL6, PMC_BOUND_ON_STORES_ARCH_FINAL);
+#endif
 }
 #else
 static void hrperf_pmc_enable_and_esel(void *info) {
@@ -120,13 +129,22 @@ static void hrperf_pmc_enable_and_esel(void *info) {
                                    (1UL << 33)); // arch 0,1,2,3, fixed 0,1
 
   // make event selections
-  wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_LLC_MISSES_FINAL);
+  #if HRP_USE_STALL_TOTAL
+    wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_STALLS_TOTAL_ARCH_FINAL);
+  #else
+    wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_LLC_MISSES_FINAL);
+  #endif
   wrmsrl(MSR_IA32_PERFEVTSEL1, PMC_SW_PREFETCH_ANY_ARCH_FINAL);
-  wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_CYCLE_STALLS_MEM_ARCH_FINAL);
-  wrmsrl(MSR_IA32_PERFEVTSEL3, PMC_STALLS_SB_ANY_ARCH_FINAL);
-  wrmsrl(MSR_IA32_PERFEVTSEL4, PMC_STALLS_TOTAL_ARCH_FINAL);
-  wrmsrl(MSR_IA32_PERFEVTSEL5, PMC_BOUND_ON_LOADS_ARCH_FINAL);
-  wrmsrl(MSR_IA32_PERFEVTSEL6, PMC_BOUND_ON_STORES_ARCH_FINAL);
+  #if HRP_USE_BOUND_ON_LOADS
+    wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_BOUND_ON_LOADS_ARCH_FINAL);
+  #else
+    wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_CYCLE_STALLS_MEM_SKYLAKE_FINAL);
+  #endif
+  #if HRP_USE_BOUND_ON_STORES
+    wrmsrl(MSR_IA32_PERFEVTSEL3, PMC_BOUND_ON_STORES_ARCH_FINAL);
+  #else
+    wrmsrl(MSR_IA32_PERFEVTSEL3, PMC_STALLS_SB_ANY_ARCH_FINAL);
+  #endif
 }
 #endif
 
@@ -157,9 +175,6 @@ static void hrperf_poller_func(void *info) {
   rdmsrl(MSR_IA32_PMC2, entry.tick.stall_mem);
   rdmsrl(MSR_IA32_FIXED_CTR0, entry.tick.inst_retire);
   rdmsrl(MSR_IA32_PMC3, entry.tick.stalls_sb);
-  rdmsrl(MSR_IA32_PMC4, entry.tick.stalls_total);
-  rdmsrl(MSR_IA32_PMC5, entry.tick.bound_on_loads);
-  rdmsrl(MSR_IA32_PMC6, entry.tick.bound_on_stores);
   rdmsrl(MSR_IA32_FIXED_CTR1, entry.tick.cpu_unhalt);
   rdmsrl(MSR_IA32_PMC0, entry.tick.llc_misses);
   rdmsrl(MSR_IA32_PMC1, entry.tick.sw_prefetch);
