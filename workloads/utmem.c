@@ -5,6 +5,7 @@
 #include <sched.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "hrperf_control.h"
 

@@ -50,7 +50,7 @@ void* memory_writer(void* arg) {
 
     printf("Write end time: %lu.%09lu seconds (CLOCK_MONOTONIC_RAW)\n",
            (unsigned long)end_time.tv_sec, end_time.tv_nsec);
-    printf("Total write time: %lu.%09lu seconds (%lu nanoseconds)\n",
+    printf("Total write time: %llu.%09llu seconds (%lu nanoseconds)\n",
            elapsed_ns / 1000000000ULL, elapsed_ns % 1000000000ULL, elapsed_ns);
 
     return NULL;

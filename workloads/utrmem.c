@@ -1,4 +1,6 @@
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
@@ -6,6 +8,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <time.h>  // Include time.h for clock_gettime
+#include <string.h>
 
 #include "hrperf_api.h"
 

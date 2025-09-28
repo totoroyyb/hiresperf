@@ -51,7 +51,7 @@ void* memory_scanner(void* arg) {
 
     printf("Scan end time: %lu.%09lu seconds (CLOCK_MONOTONIC_RAW)\n",
            (unsigned long)end_time.tv_sec, end_time.tv_nsec);
-    printf("Total scan time: %lu.%09lu seconds (%lu nanoseconds)\n",
+    printf("Total scan time: %llu.%09llu seconds (%lu nanoseconds)\n",
            elapsed_ns / 1000000000ULL, elapsed_ns % 1000000000ULL, elapsed_ns);
 
     // Instead of running forever, return after one scan
