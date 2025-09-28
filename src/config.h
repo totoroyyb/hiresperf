@@ -8,7 +8,7 @@
 */
 
 // the size for each core's PMC evnets buffer for poller/logger
-#define HRP_PMC_BUFFER_SIZE 4096
+#define HRP_PMC_BUFFER_SIZE 8192
 
 // the poller thread will sleep for this interval, in microseconds
 #define HRP_PMC_POLL_INTERVAL_US_LOW 20
