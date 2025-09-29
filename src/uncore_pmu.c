@@ -229,10 +229,20 @@ init_g_uncore_pmus(void) {
 
 void
 destroy_g_uncore_pmus(void) {
+    // Destroy all IMC PMUs and free their resources
+    for (u32 i = 0; i < g_uncore_pmus.num_imcs; i++) {
+        if (g_uncore_pmus.imcs[i]) {
+            // Destroy hw_reg instances and unmap MMIO
+            uncore_pmu_destroy(g_uncore_pmus.imcs[i]);
+            // Free the PMU container itself (allocated via kzalloc)
+            kfree(g_uncore_pmus.imcs[i]);
+            g_uncore_pmus.imcs[i] = NULL;
+        }
+    }
+    g_uncore_pmus.num_imcs = 0;
+    
     if (g_uncore_pmus.discovery) {
         uncore_pmu_discovery_destroy(g_uncore_pmus.discovery);
         g_uncore_pmus.discovery = NULL;
     }
-    g_uncore_pmus.num_imcs = 0;
-    memset(g_uncore_pmus.imcs, 0, sizeof(g_uncore_pmus.imcs));
 }

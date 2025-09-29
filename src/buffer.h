@@ -1,10 +1,13 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include "config.h"
+
 #include <linux/types.h>
 #include <linux/ktime.h>
-
-#include "config.h"
+#if HRP_HEAP_ALLOCATED_RB && HRP_EXLARGE_HEAP_ALLOCATED_RB
+#include <linux/mm_types.h>
+#endif
 
 typedef struct {
     u64 kts;
@@ -35,6 +38,12 @@ typedef struct __attribute__((__packed__)) {
 typedef struct {
 #if HRP_HEAP_ALLOCATED_RB
     HrperfLogEntry *buffer;
+#if HRP_EXLARGE_HEAP_ALLOCATED_RB
+    // For extremely large ring buffers, we allocate per-page and vmap them.
+    // Track per-instance page array and count for correct teardown.
+    struct page **pages;
+    size_t num_pages;
+#endif
 #else
     HrperfLogEntry buffer[HRP_PMC_BUFFER_SIZE];
 #endif
@@ -45,5 +54,6 @@ typedef struct {
 bool is_full(const HrperfRingBuffer *rb);
 int init_ring_buffer(HrperfRingBuffer *rb);
 void enqueue(HrperfRingBuffer *rb, HrperfLogEntry data);
+void deinit_ring_buffer(HrperfRingBuffer *rb);
 
 #endif // BUFFER_H

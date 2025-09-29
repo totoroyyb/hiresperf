@@ -521,6 +521,13 @@ static __always_inline void cleanup(void) {
     destroy_workqueue(instructed_profile_wq);
   }
 
+  // Free per-CPU ring buffers allocated at init
+  int cpu;
+  for_each_cpu(cpu, &hrp_selected_cpus) {
+    HrperfRingBuffer *rb = per_cpu_ptr(&per_cpu_buffer, cpu);
+    deinit_ring_buffer(rb);
+  }
+
   hrperf_close_log_file(log_file);
 
 #if HRP_LOG_IMC

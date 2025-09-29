@@ -13,19 +13,24 @@
 #include "config.h"
 
 #if HRP_EXLARGE_HEAP_ALLOCATED_RB
-static struct page **buffer_pages;
-static size_t buffer_num_pages = 0;
-
-static void free_alloc_pages(void) {
-    if (buffer_pages) {
-        for (size_t i = 0; i < buffer_num_pages; ++i) {
-            if (buffer_pages[i]) {
-                __free_page(buffer_pages[i]);
+// Free helper for EXLARGE path; acts on per-ring-buffer state.
+static void free_alloc_pages(HrperfRingBuffer *rb) {
+    if (!rb) return;
+    if (rb->buffer) {
+        // vmapped region corresponding to pages[]; unmap first.
+        vunmap((void *)rb->buffer);
+        rb->buffer = NULL;
+    }
+    if (rb->pages) {
+        for (size_t i = 0; i < rb->num_pages; ++i) {
+            if (rb->pages[i]) {
+                __free_page(rb->pages[i]);
             }
         }
-        kfree(buffer_pages);
-        buffer_pages = NULL;
+        kfree(rb->pages);
+        rb->pages = NULL;
     }
+    rb->num_pages = 0;
 }
 #endif
 
@@ -35,28 +40,28 @@ static int hrp_alloc_rb_buf(HrperfRingBuffer *rb) {
     size_t buf_size = HRP_PMC_BUFFER_SIZE * sizeof(HrperfLogEntry);
 #if HRP_EXLARGE_HEAP_ALLOCATED_RB
     unsigned long page_aligned_buf_size = PAGE_ALIGN(buf_size);
-    buffer_num_pages = page_aligned_buf_size / PAGE_SIZE;
-    buffer_pages = kcalloc(buffer_num_pages, sizeof(struct page *), GFP_KERNEL);
-    if (!buffer_pages) {
+    rb->num_pages = page_aligned_buf_size / PAGE_SIZE;
+    rb->pages = kcalloc(rb->num_pages, sizeof(struct page *), GFP_KERNEL);
+    if (!rb->pages) {
         pr_err("hrperf: Failed to allocate page pointer array\n");
-        free_alloc_pages();
+        free_alloc_pages(rb);
         return -ENOMEM;
     }
 
-    for (size_t i = 0; i < buffer_num_pages; ++i) {
-        buffer_pages[i] = alloc_page(GFP_KERNEL | __GFP_ZERO);
-        if (!buffer_pages[i]) {
+    for (size_t i = 0; i < rb->num_pages; ++i) {
+        rb->pages[i] = alloc_page(GFP_KERNEL | __GFP_ZERO);
+        if (!rb->pages[i]) {
             pr_err("hrperf: Failed to allocate page %zu\n", i);
-            free_alloc_pages();
+            free_alloc_pages(rb);
             return -ENOMEM;
         }
     }
     
     // We need a contiguous kernel virtual mapping of potentially non-contiguous
-    buf = vmap(buffer_pages, buffer_num_pages, VM_MAP, PAGE_KERNEL);
+    buf = vmap(rb->pages, rb->num_pages, VM_MAP, PAGE_KERNEL);
     if (!buf) {
         pr_err("hrperf: Failed to vmap page array\n");
-        free_alloc_pages();
+        free_alloc_pages(rb);
         return -ENOMEM;
     }
 #else
@@ -79,6 +84,11 @@ inline __attribute__((always_inline)) int init_ring_buffer(HrperfRingBuffer *rb)
     rb->head = 0;
     rb->tail = 0;
 #if HRP_HEAP_ALLOCATED_RB
+#if HRP_EXLARGE_HEAP_ALLOCATED_RB
+    rb->buffer = NULL;
+    rb->pages = NULL;
+    rb->num_pages = 0;
+#endif
     int r = hrp_alloc_rb_buf(rb);
     return r;
 #else
@@ -96,4 +106,21 @@ inline __attribute__((always_inline)) void enqueue(HrperfRingBuffer *rb, HrperfL
 
     rb->buffer[rb->tail] = data;
     smp_store_release(&rb->tail, next_tail);
+}
+
+void deinit_ring_buffer(HrperfRingBuffer *rb) {
+    if (rb == NULL) return;
+#if HRP_HEAP_ALLOCATED_RB
+#if HRP_EXLARGE_HEAP_ALLOCATED_RB
+    // Free vmapped buffer and backing pages
+    free_alloc_pages(rb);
+#else
+    if (rb->buffer) {
+        kfree(rb->buffer);
+        rb->buffer = NULL;
+    }
+#endif
+#endif
+    rb->head = 0;
+    rb->tail = 0;
 }
