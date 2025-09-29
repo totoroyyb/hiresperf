@@ -534,7 +534,9 @@ static __always_inline void cleanup(void) {
   destroy_g_uncore_pmus();
 #endif
 
+#if HRP_USE_RDT
   mbm_deinit();
+#endif
 
   dev_t dev_num = MKDEV(major_number, 0);
   device_destroy(dev_class, dev_num);
@@ -548,10 +550,12 @@ static __always_inline void cleanup(void) {
 static int __init hrp_pmc_init(void) {
   printk(KERN_INFO "hrperf: Initializing LKM\n");
 
+#if HRP_USE_RDT
   if (mbm_init() != 0) {
     pr_err("hrperf: Failed to initialize Intel MBM.\n");
     return -EIO;
   }
+#endif
 
 #if HRP_USE_TSC
   u64 tsc_cycle = hrp_calibrate_tsc();
