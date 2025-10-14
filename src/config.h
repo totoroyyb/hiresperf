@@ -84,6 +84,7 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 #define HRP_USE_STALL_TOTAL 0
 #define HRP_USE_BOUND_ON_LOADS 0
 #define HRP_USE_BOUND_ON_STORES 0
+#define HRP_USE_COUNTER_COMBINATION 0 // set to 1 to use counter combination feature, 0 to disable
 
 #define HRP_USE_RDT     0 // set to 1 to use RDT events (MBM, CMT), 0 to disable
 /*
