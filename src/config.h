@@ -81,10 +81,10 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 #define HRP_USE_OFFCORE 1 // set to 1 for using offcore reads/writes PMUs, 0 for using cache-miss/prefetch PMUs
 #define HRP_LOG_IMC     0 // set to 1 to log IMC uncore PMU events, 0 to disable
 #define HRP_USE_WRITE_EST 1 // set to 1 to use write estimation PMU events, 0 to disable
-#define HRP_USE_STALL_TOTAL 0
+#define HRP_USE_STALL_TOTAL 1
 #define HRP_USE_BOUND_ON_LOADS 0
 #define HRP_USE_BOUND_ON_STORES 0
-#define HRP_USE_COUNTER_COMBINATION 0 // set to 1 to use counter combination feature, 0 to disable
+#define HRP_USE_COUNTER_COMBINATION 1 // set to 1 to use counter combination feature, 0 to disable
 
 #define HRP_USE_RDT     0 // set to 1 to use RDT events (MBM, CMT), 0 to disable
 /*
@@ -115,6 +115,9 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 #define PMC_STALLS_TOTAL_ARCH_FINAL                    PMC_PASTE(PMC_STALLS_TOTAL_, HRP_ARCH_NAME, _FINAL)
 #define PMC_BOUND_ON_LOADS_ARCH_FINAL                  PMC_PASTE(PMC_BOUND_ON_LOADS_, HRP_ARCH_NAME, _FINAL)
 #define PMC_BOUND_ON_STORES_ARCH_FINAL                 PMC_PASTE(PMC_BOUND_ON_STORES_, HRP_ARCH_NAME, _FINAL)
+#define PMC_STALLS_L1D_MISS_ARCH_FINAL                 PMC_PASTE(PMC_STALLS_L1D_MISS_, HRP_ARCH_NAME, _FINAL)
+#define PMC_STALLS_L2_MISS_ARCH_FINAL                  PMC_PASTE(PMC_STALLS_L2_MISS_, HRP_ARCH_NAME, _FINAL)
+#define PMC_STALLS_L3_MISS_ARCH_FINAL                  PMC_PASTE(PMC_STALLS_L3_MISS_, HRP_ARCH_NAME, _FINAL)
 
 /*
     Device Configurations

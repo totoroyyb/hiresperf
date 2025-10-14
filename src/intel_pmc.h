@@ -40,6 +40,9 @@
 #define PMC_STALLS_TOTAL_SKYLAKE                            PMC_ESEL_ENTRY(0xA3, 0x04, 0x04)
 #define PMC_BOUND_ON_LOADS_SKYLAKE                          PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
 #define PMC_BOUND_ON_STORES_SKYLAKE                         PMC_ESEL_ENTRY(0xA6, 0x40, 0x02)
+#define PMC_STALLS_L1D_MISS_SKYLAKE                         PMC_ESEL_ENTRY(0xA3, 0x0C, 0x0C)
+#define PMC_STALLS_L2_MISS_SKYLAKE                         PMC_ESEL_ENTRY(0xA3, 0x05, 0x05)
+#define PMC_STALLS_L3_MISS_SKYLAKE                          PMC_ESEL_ENTRY(0xA3, 0x06, 0x06)
 /* Ice Lake */
 #define PMC_SW_PREFETCH_ANY_ICELAKE                         PMC_ESEL_ENTRY(0x32, 0x0F, 0)
 #define PMC_CYCLE_STALLS_MEM_ICELAKE                        PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
@@ -47,6 +50,9 @@
 #define PMC_STALLS_TOTAL_ICELAKE                            PMC_ESEL_ENTRY(0xA3, 0x04, 0x04)
 #define PMC_BOUND_ON_LOADS_ICELAKE                          PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
 #define PMC_BOUND_ON_STORES_ICELAKE                         PMC_ESEL_ENTRY(0xA6, 0x40, 0x02)
+#define PMC_STALLS_L1D_MISS_ICELAKE                         PMC_ESEL_ENTRY(0xA3, 0x0C, 0x0C)
+#define PMC_STALLS_L2_MISS_ICELAKE                          PMC_ESEL_ENTRY(0xA3, 0x05, 0x05)
+#define PMC_STALLS_L3_MISS_ICELAKE                          PMC_ESEL_ENTRY(0xA3, 0x06, 0x06)
 /* Sapphire Rapids */
 #define PMC_SW_PREFETCH_ANY_SAPPHIRE                        PMC_ESEL_ENTRY(0x40, 0x0F, 0)
 #define PMC_CYCLE_STALLS_MEM_SAPPHIRE                       PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
@@ -54,6 +60,9 @@
 #define PMC_STALLS_TOTAL_SAPPHIRE                           PMC_ESEL_ENTRY(0xA3, 0x04, 0x04)
 #define PMC_BOUND_ON_LOADS_SAPPHIRE                         PMC_ESEL_ENTRY(0xA6, 0x21, 0x05)
 #define PMC_BOUND_ON_STORES_SAPPHIRE                        PMC_ESEL_ENTRY(0xA6, 0x40, 0x02)
+#define PMC_STALLS_L1D_MISS_SAPPHIRE                        PMC_ESEL_ENTRY(0xA3, 0x0C, 0x0C)
+#define PMC_STALLS_L2_MISS_SAPPHIRE                         PMC_ESEL_ENTRY(0xA3, 0x05, 0x05)
+#define PMC_STALLS_L3_MISS_SAPPHIRE                         PMC_ESEL_ENTRY(0xA3, 0x06, 0x06)
 
 /* 
         offcore events, varys a lot from one chip to another.
@@ -85,6 +94,12 @@
                         PMC_ESEL_ENABLE)
 #define PMC_BOUND_ON_STORES_SKYLAKE_FINAL (PMC_BOUND_ON_STORES_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
+#define PMC_STALLS_L1D_MISS_SKYLAKE_FINAL (PMC_STALLS_L1D_MISS_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_L2_MISS_SKYLAKE_FINAL (PMC_STALLS_L2_MISS_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_L3_MISS_SKYLAKE_FINAL (PMC_STALLS_L3_MISS_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
 
 /* Ice Lake */
 #define PMC_SW_PREFETCH_ANY_ICELAKE_FINAL (PMC_SW_PREFETCH_ANY_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
@@ -98,6 +113,12 @@
 #define PMC_BOUND_ON_LOADS_ICELAKE_FINAL (PMC_BOUND_ON_LOADS_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 #define PMC_BOUND_ON_STORES_ICELAKE_FINAL (PMC_BOUND_ON_STORES_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_L1D_MISS_ICELAKE_FINAL (PMC_STALLS_L1D_MISS_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_L2_MISS_ICELAKE_FINAL (PMC_STALLS_L2_MISS_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_L3_MISS_ICELAKE_FINAL (PMC_STALLS_L3_MISS_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 
 /* Sapphire Rapids */
@@ -116,4 +137,10 @@
 #define PMC_BOUND_ON_LOADS_SAPPHIRE_FINAL (PMC_BOUND_ON_LOADS_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 #define PMC_BOUND_ON_STORES_SAPPHIRE_FINAL (PMC_BOUND_ON_STORES_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_L1D_MISS_SAPPHIRE_FINAL (PMC_STALLS_L1D_MISS_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_L2_MISS_SAPPHIRE_FINAL (PMC_STALLS_L2_MISS_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_STALLS_L3_MISS_SAPPHIRE_FINAL (PMC_STALLS_L3_MISS_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
