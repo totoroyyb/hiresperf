@@ -262,7 +262,7 @@ def parse_hrperf_log_polars(
     include_mem_bw = False
     if rw_pair:
         include_mem_bw = True
-        df = df.with_columns((pl.col(rw_pair[0]) + pl.col(rw_pair[1])) * 64.0
+        df = df.with_columns(((pl.col(rw_pair[0]) + pl.col(rw_pair[1])) * 64.0)
                              .alias("memory_bandwidth_bytes_per_us"))
 
     # final cols
