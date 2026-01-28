@@ -256,7 +256,8 @@ static __always_inline void smp_poll_pmus(hrperf_poller_data_t *poller_data) {
 #endif
 
 #if HRP_USE_TSC
-  poller_data->kts = __rdtsc();
+  // poller_data->kts = __rdtsc();
+  poller_data->kts = __rdtscp(NULL);
 #else
 #if HRP_USE_RAW_CLOCK
   // consider negative ktime_t values as errors and set to 0
@@ -474,10 +475,11 @@ static long hrperf_ioctl(struct file *file, unsigned int cmd,
   }
   case HRP_PMC_IOC_INSTRUCTED_POLL: {
     // Perform a single poll operation
-    int ret = enqueue_instructed_profile_op(instructed_poll_op);
-    if (ret != 0) {
-      return ret;
-    }
+    // // int ret = enqueue_instructed_profile_op(instructed_poll_op);
+    // if (ret != 0) {
+    //   return ret;
+    // }
+    instructed_poll_op(NULL);
     break;
   }
   case HRP_PMC_IOC_INSTRUCTED_LOG: {
