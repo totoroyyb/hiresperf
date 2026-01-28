@@ -89,8 +89,14 @@ static void enable_rdpmc_in_user_space(void *info) {
   // Write the modified value back to CR4
   asm volatile("mov %0, %%cr4" ::"r"(cr4_value));
 }
-
-#if HRP_USE_OFFCORE
+#if HRP_USE_HIT_COUNTS
+  static void hrperf_pmc_enable_and_esel(void *info) {
+    wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_L2_HIT_LOAD_ARCH_FINAL);
+    wrmsrl(MSR_IA32_PERFEVTSEL1, PMC_L2_HIT_RFO_ARCH_FINAL);
+    wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_L2_PREFETCH_ARCH_FINAL);
+    wrmsrl(MSR_IA32_PERFEVTSEL3, PMC_L3_HIT_LOAD_ARCH_FINAL);
+  }
+#elif HRP_USE_OFFCORE
 static void hrperf_pmc_enable_and_esel(void *info) {
   // enable the counters
   wrmsrl(MSR_IA32_FIXED_CTR_CTRL,
