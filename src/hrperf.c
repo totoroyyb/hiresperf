@@ -91,6 +91,11 @@ static void enable_rdpmc_in_user_space(void *info) {
 }
 #if HRP_USE_HIT_COUNTS
   static void hrperf_pmc_enable_and_esel(void *info) {
+    wrmsrl(MSR_IA32_FIXED_CTR_CTRL,
+      0x033); // fixed counter 0 for inst retire, 1 for cpu unhalt
+    wrmsrl(MSR_IA32_GLOBAL_CTRL, 1UL | (1UL << 1) | (1UL << 2) | (1UL << 3) |
+                                (1UL << 32) |
+                                (1UL << 33)); // arch 0,1,2,3, fixed 0,1
     wrmsrl(MSR_IA32_PERFEVTSEL0, PMC_L2_HIT_LOAD_ARCH_FINAL);
     wrmsrl(MSR_IA32_PERFEVTSEL1, PMC_L2_HIT_RFO_ARCH_FINAL);
     wrmsrl(MSR_IA32_PERFEVTSEL2, PMC_L2_PREFETCH_ARCH_FINAL);

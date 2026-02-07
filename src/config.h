@@ -78,14 +78,14 @@ static const unsigned long hrp_pmc_cpu_selection_mask_bits[HRP_PMC_CPU_SELECTION
 // to add a new arch, add macros in intel_pmc.h and update this macro
 #define HRP_ARCH_NAME SAPPHIRE
 
-#define HRP_USE_OFFCORE 1 // set to 1 for using offcore reads/writes PMUs, 0 for using cache-miss/prefetch PMUs
+#define HRP_USE_OFFCORE 0 // set to 1 for using offcore reads/writes PMUs, 0 for using cache-miss/prefetch PMUs
 #define HRP_LOG_IMC     0 // set to 1 to log IMC uncore PMU events, 0 to disable
-#define HRP_USE_WRITE_EST 1 // set to 1 to use write estimation PMU events, 0 to disable
+#define HRP_USE_WRITE_EST 0 // set to 1 to use write estimation PMU events, 0 to disable
 #define HRP_USE_STALL_TOTAL 0
 #define HRP_USE_BOUND_ON_LOADS 0
 #define HRP_USE_BOUND_ON_STORES 0
 #define HRP_USE_COUNTER_COMBINATION 0 // set to 1 to use counter combination feature, 0 to disable, new counters are stall total, L1D miss, L2 miss, L3 miss
-#define HRP_USE_HIT_COUNTS 0
+#define HRP_USE_HIT_COUNTS 1
 
 #define HRP_USE_RDT     0 // set to 1 to use RDT events (MBM, CMT), 0 to disable
 /*
