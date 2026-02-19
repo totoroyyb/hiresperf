@@ -2,6 +2,7 @@ from dataclasses import dataclass, asdict
 import numpy as np
 import pandas as pd
 import argparse
+import os
 
 parser = argparse.ArgumentParser(description="Parse HRP instructed profile.")
 parser.add_argument("--use_imc", action="store_true", help="Use IMC counters")
@@ -79,6 +80,24 @@ def read_logs_to_numpy(file_path: str) -> np.ndarray:
             (f'{c2_name}', np.uint64),
         ])
     try:
+        file_size = os.path.getsize(file_path)
+    except OSError as e:
+        print(f"Error reading file size: {e}")
+        return np.array([])
+
+    if file_size == 0:
+        print(f"Binary file is empty: {file_path}")
+        return np.array([])
+
+    if file_size % dt.itemsize != 0:
+        print(
+            f"Binary size mismatch for {file_path}: {file_size} bytes is not "
+            f"a multiple of parser record size {dt.itemsize}. Check --use_* "
+            "flags against hiresperf src/config.h."
+        )
+        return np.array([])
+
+    try:
         data = np.fromfile(file_path, dtype=dt)
         return data
     except Exception as e:
@@ -152,6 +171,18 @@ def parse_hrp_instructed_profile(file_path: str) -> list[TimeRangeData]:
     if df.empty:
         print("No data to parse.")
         return []
+    unique_timestamps = df['timestamp'].nunique()
+    if unique_timestamps < 2:
+        print(
+            f"Insufficient timestamps ({unique_timestamps}) in {file_path}. "
+            "Need at least 2 polls to form one range."
+        )
+        return []
+    if unique_timestamps % 2 != 0:
+        print(
+            f"Warning: odd number of timestamps ({unique_timestamps}) in "
+            f"{file_path}; dropping the last incomplete timestamp."
+        )
     ranges = get_all_time_ranges(df)
     return [calc_data_in_range(r, df) for r in ranges]
 
