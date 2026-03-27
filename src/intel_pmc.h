@@ -43,6 +43,10 @@
 #define PMC_STALLS_L1D_MISS_SKYLAKE                         PMC_ESEL_ENTRY(0xA3, 0x0C, 0x0C)
 #define PMC_STALLS_L2_MISS_SKYLAKE                         PMC_ESEL_ENTRY(0xA3, 0x05, 0x05)
 #define PMC_STALLS_L3_MISS_SKYLAKE                          PMC_ESEL_ENTRY(0xA3, 0x06, 0x06)
+#define PMC_L2_HIT_LOAD_SKYLAKE                             PMC_ESEL_ENTRY(0x24, 0xC1, 0)
+#define PMC_L2_HIT_RFO_SKYLAKE                              PMC_ESEL_ENTRY(0x24, 0xC2, 0)
+#define PMC_L2_PREFETCH_SKYLAKE                             PMC_ESEL_ENTRY(0x24, 0xD8, 0)
+#define PMC_L3_HIT_LOAD_SKYLAKE                             PMC_ESEL_ENTRY(0xD1, 0x04, 0)
 /* Ice Lake */
 #define PMC_SW_PREFETCH_ANY_ICELAKE                         PMC_ESEL_ENTRY(0x32, 0x0F, 0)
 #define PMC_CYCLE_STALLS_MEM_ICELAKE                        PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
@@ -53,6 +57,10 @@
 #define PMC_STALLS_L1D_MISS_ICELAKE                         PMC_ESEL_ENTRY(0xA3, 0x0C, 0x0C)
 #define PMC_STALLS_L2_MISS_ICELAKE                          PMC_ESEL_ENTRY(0xA3, 0x05, 0x05)
 #define PMC_STALLS_L3_MISS_ICELAKE                          PMC_ESEL_ENTRY(0xA3, 0x06, 0x06)
+#define PMC_L2_HIT_LOAD_ICELAKE                             PMC_ESEL_ENTRY(0x24, 0xC1, 0)
+#define PMC_L2_HIT_RFO_ICELAKE                              PMC_ESEL_ENTRY(0x24, 0xC2, 0)
+#define PMC_L2_PREFETCH_ICELAKE                             PMC_ESEL_ENTRY(0x24, 0xD8, 0)
+#define PMC_L3_HIT_LOAD_ICELAKE                             PMC_ESEL_ENTRY(0xD1, 0x04, 0)
 /* Sapphire Rapids */
 #define PMC_SW_PREFETCH_ANY_SAPPHIRE                        PMC_ESEL_ENTRY(0x40, 0x0F, 0)
 #define PMC_CYCLE_STALLS_MEM_SAPPHIRE                       PMC_ESEL_ENTRY(0xA3, 0x14, 0x14)
@@ -63,6 +71,10 @@
 #define PMC_STALLS_L1D_MISS_SAPPHIRE                        PMC_ESEL_ENTRY(0xA3, 0x0C, 0x0C)
 #define PMC_STALLS_L2_MISS_SAPPHIRE                         PMC_ESEL_ENTRY(0xA3, 0x05, 0x05)
 #define PMC_STALLS_L3_MISS_SAPPHIRE                         PMC_ESEL_ENTRY(0xA3, 0x06, 0x06)
+#define PMC_L2_HIT_LOAD_SAPPHIRE                            PMC_ESEL_ENTRY(0x24, 0xC1, 0)
+#define PMC_L2_HIT_RFO_SAPPHIRE                             PMC_ESEL_ENTRY(0x24, 0xC2, 0)
+#define PMC_L2_PREFETCH_SAPPHIRE                             PMC_ESEL_ENTRY(0x24, 0xD8, 0)
+#define PMC_L3_HIT_LOAD_SAPPHIRE                             PMC_ESEL_ENTRY(0xD1, 0x04, 0)
 
 /* 
         offcore events, varys a lot from one chip to another.
@@ -100,6 +112,14 @@
                         PMC_ESEL_ENABLE)
 #define PMC_STALLS_L3_MISS_SKYLAKE_FINAL (PMC_STALLS_L3_MISS_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
+#define PMC_L2_HIT_LOAD_SKYLAKE_FINAL (PMC_L2_HIT_LOAD_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L2_HIT_RFO_SKYLAKE_FINAL (PMC_L2_HIT_RFO_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L2_PREFETCH_SKYLAKE_FINAL (PMC_L2_PREFETCH_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L3_HIT_LOAD_SKYLAKE_FINAL (PMC_L3_HIT_LOAD_SKYLAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
 
 /* Ice Lake */
 #define PMC_SW_PREFETCH_ANY_ICELAKE_FINAL (PMC_SW_PREFETCH_ANY_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
@@ -119,6 +139,14 @@
 #define PMC_STALLS_L2_MISS_ICELAKE_FINAL (PMC_STALLS_L2_MISS_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 #define PMC_STALLS_L3_MISS_ICELAKE_FINAL (PMC_STALLS_L3_MISS_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L2_HIT_LOAD_ICELAKE_FINAL (PMC_L2_HIT_LOAD_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L2_HIT_RFO_ICELAKE_FINAL (PMC_L2_HIT_RFO_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L2_PREFETCH_ICELAKE_FINAL (PMC_L2_PREFETCH_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L3_HIT_LOAD_ICELAKE_FINAL (PMC_L3_HIT_LOAD_ICELAKE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 
 /* Sapphire Rapids */
@@ -143,4 +171,12 @@
 #define PMC_STALLS_L2_MISS_SAPPHIRE_FINAL (PMC_STALLS_L2_MISS_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)
 #define PMC_STALLS_L3_MISS_SAPPHIRE_FINAL (PMC_STALLS_L3_MISS_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L2_HIT_LOAD_SAPPHIRE_FINAL (PMC_L2_HIT_LOAD_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L2_HIT_RFO_SAPPHIRE_FINAL (PMC_L2_HIT_RFO_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L2_PREFETCH_SAPPHIRE_FINAL (PMC_L2_PREFETCH_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
+                        PMC_ESEL_ENABLE)
+#define PMC_L3_HIT_LOAD_SAPPHIRE_FINAL (PMC_L3_HIT_LOAD_SAPPHIRE | PMC_ESEL_USR | PMC_ESEL_OS | \
                         PMC_ESEL_ENABLE)

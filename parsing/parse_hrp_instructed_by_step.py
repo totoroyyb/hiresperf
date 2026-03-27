@@ -2,11 +2,13 @@ from dataclasses import dataclass, asdict
 import numpy as np
 import pandas as pd
 import argparse
+import os
 
 parser = argparse.ArgumentParser(description="Parse HRP instructed profile.")
 parser.add_argument("--use_imc", action="store_true", help="Use IMC counters")
 parser.add_argument("--use_offcore", action="store_true", help="Use offcore counters")
 parser.add_argument("--use_write_est", action="store_true", help="Use write estimate counter")
+parser.add_argument("--use_hit_counts", action="store_true", help="Use hit counts counter")
 parser.add_argument("--tsc_freq", type=float, required=True, help="TSC frequency in cycles per microsecond.")
 parser.add_argument("--cpu_store_imc", type=int, default=0, help="CPU ID to store IMC data (default: 0)")
 parser.add_argument("--cpu_id", type=int, default=10, help="The CPU ID to calculate the diff (default: 10). Use -1 to aggregate over all cores.")
@@ -16,13 +18,15 @@ args = parser.parse_args()
 
 c1_name = None
 c2_name = None
+c3_name = None
+c4_name = None
 
 @dataclass
 class TimeRangeData:
     duration_ms: float
-    stall_mem_diff: int
+    c3_diff: int
     inst_retire_diff: int
-    stalls_sb_diff: int
+    c4_diff: int
     cpu_unhalt_diff: int
     c1_diff: int
     c2_diff: int
@@ -32,23 +36,32 @@ class TimeRangeData:
     end_ts: int
 
 def prepare_core_name():
-    global c1_name, c2_name
+    global c1_name, c2_name, c3_name, c4_name
     if args.use_offcore:
         c1_name = 'offcore_read'
         c2_name = 'offcore_write_est' if args.use_write_est else 'offcore_write'
-    else:
+        c3_name = 'stall_mem'
+        c4_name = 'stalls_sb'
+    elif args.use_hit_counts:
+        c1_name = 'l2_hit_load'
+        c2_name = 'l2_hit_rfo'
+        c3_name = 'l2_prefetch'
+        c4_name = 'l3_hit_load'
+    else :
         c1_name = 'llc_misses'
         c2_name = 'sw_prefetch'
+        c3_name = 'stall_mem'
+        c4_name = 'stalls_sb'
 
 def read_logs_to_numpy(file_path: str) -> np.ndarray:
-    global c1_name, c2_name, args
+    global c1_name, c2_name, c3_name, c4_name, args
     if args.use_imc:
         dt = np.dtype([
             ('cpu_id', np.int32),
             ('timestamp', np.uint64),
-            ('stall_mem', np.uint64),
+            (f'{c3_name}', np.uint64),
             ('inst_retire', np.uint64),
-            ('stalls_sb', np.uint64),
+            (f'{c4_name}', np.uint64),
             ('cpu_unhalt', np.uint64),
             (f'{c1_name}', np.uint64),
             (f'{c2_name}', np.uint64),
@@ -59,13 +72,31 @@ def read_logs_to_numpy(file_path: str) -> np.ndarray:
         dt = np.dtype([
             ('cpu_id', np.int32),
             ('timestamp', np.uint64),
-            ('stall_mem', np.uint64),
+            (f'{c3_name}', np.uint64),
             ('inst_retire', np.uint64),
-            ('stalls_sb', np.uint64),
+            (f'{c4_name}', np.uint64),
             ('cpu_unhalt', np.uint64),
             (f'{c1_name}', np.uint64),
             (f'{c2_name}', np.uint64),
         ])
+    try:
+        file_size = os.path.getsize(file_path)
+    except OSError as e:
+        print(f"Error reading file size: {e}")
+        return np.array([])
+
+    if file_size == 0:
+        print(f"Binary file is empty: {file_path}")
+        return np.array([])
+
+    if file_size % dt.itemsize != 0:
+        print(
+            f"Binary size mismatch for {file_path}: {file_size} bytes is not "
+            f"a multiple of parser record size {dt.itemsize}. Check --use_* "
+            "flags against hiresperf src/config.h."
+        )
+        return np.array([])
+
     try:
         data = np.fromfile(file_path, dtype=dt)
         return data
@@ -83,25 +114,27 @@ def get_all_time_ranges(df: pd.DataFrame) -> list[tuple[int, int]]:
     return [(timestamps[i], timestamps[i+1]) for i in range(0, len(timestamps)-1, 2)]
 
 def calc_data_in_range(time_range: tuple[int, int], df: pd.DataFrame) -> TimeRangeData:
-    global c1_name, c2_name, args
+    global c1_name, c2_name, c3_name, c4_name, args
     c1_diff_name = f'{c1_name}_diff'
     c2_diff_name = f'{c2_name}_diff'
+    c3_diff_name = f'{c3_name}_diff'
+    c4_diff_name = f'{c4_name}_diff'
     start, end = time_range
 
     df_range = df[(df['timestamp'] >= start) & (df['timestamp'] <= end)]
     assert len(df_range["timestamp"].unique()) == 2, "Must have two timestamps per range"
 
     t_min, t_max = df_range['timestamp'].min(), df_range['timestamp'].max()
-    cols = ['cpu_id', 'stall_mem', 'inst_retire', 'stalls_sb', 'cpu_unhalt', f'{c1_name}', f'{c2_name}']
+    cols = ['cpu_id', f'{c3_name}', 'inst_retire', f'{c4_name}', 'cpu_unhalt', f'{c1_name}', f'{c2_name}']
     df_start = df[df['timestamp'] == t_min][cols]
     df_end = df[df['timestamp'] == t_max][cols]
 
     merged = pd.merge(df_end, df_start, on='cpu_id', suffixes=('_end', '_start'))
     diff = pd.DataFrame({
         'cpu_id': merged['cpu_id'],
-        'stall_mem_diff': merged['stall_mem_end'] - merged['stall_mem_start'],
+        f'{c3_diff_name}': merged[f'{c3_name}_end'] - merged[f'{c3_name}_start'],
         'inst_retire_diff': merged['inst_retire_end'] - merged['inst_retire_start'],
-        'stalls_sb_diff': merged['stalls_sb_end'] - merged['stalls_sb_start'],
+        f'{c4_diff_name}': merged[f'{c4_name}_end'] - merged[f'{c4_name}_start'],
         'cpu_unhalt_diff': merged['cpu_unhalt_end'] - merged['cpu_unhalt_start'],
         f'{c1_diff_name}': merged[f'{c1_name}_end'] - merged[f'{c1_name}_start'],
         f'{c2_diff_name}': merged[f'{c2_name}_end'] - merged[f'{c2_name}_start'],
@@ -112,9 +145,9 @@ def calc_data_in_range(time_range: tuple[int, int], df: pd.DataFrame) -> TimeRan
 
     result = TimeRangeData(
         duration_ms=(t_max - t_min) / args.tsc_freq / 1e3,
-        stall_mem_diff=int(diff['stall_mem_diff'].sum()),
+        c3_diff=int(diff[f'{c3_diff_name}'].sum()),
         inst_retire_diff=int(diff['inst_retire_diff'].sum()),
-        stalls_sb_diff=int(diff['stalls_sb_diff'].sum()),
+        c4_diff=int(diff[f'{c4_diff_name}'].sum()),
         cpu_unhalt_diff=int(diff['cpu_unhalt_diff'].sum()),
         c1_diff=int(diff[f'{c1_diff_name}'].sum()),
         c2_diff=int(diff[f'{c2_diff_name}'].sum()),
@@ -138,6 +171,18 @@ def parse_hrp_instructed_profile(file_path: str) -> list[TimeRangeData]:
     if df.empty:
         print("No data to parse.")
         return []
+    unique_timestamps = df['timestamp'].nunique()
+    if unique_timestamps < 2:
+        print(
+            f"Insufficient timestamps ({unique_timestamps}) in {file_path}. "
+            "Need at least 2 polls to form one range."
+        )
+        return []
+    if unique_timestamps % 2 != 0:
+        print(
+            f"Warning: odd number of timestamps ({unique_timestamps}) in "
+            f"{file_path}; dropping the last incomplete timestamp."
+        )
     ranges = get_all_time_ranges(df)
     return [calc_data_in_range(r, df) for r in ranges]
 
@@ -151,6 +196,8 @@ def results_to_dataframe(data_list: list[TimeRangeData]) -> pd.DataFrame:
 
     df[f'{c1_name}_diff'] = df['c1_diff']
     df[f'{c2_name}_diff'] = df['c2_diff']
+    df[f'{c3_name}_diff'] = df['c3_diff']
+    df[f'{c4_name}_diff'] = df['c4_diff']
 
     df['total_transferred_MB'] = (df['c1_diff'] + df['c2_diff']) * 64.0 / 1e6
 
@@ -159,20 +206,21 @@ def results_to_dataframe(data_list: list[TimeRangeData]) -> pd.DataFrame:
     eps = 1e-12
     denom = df['cpu_unhalt_diff'].astype(float).clip(lower=eps)
 
-    df['load_mem_cycle_stall_ratio'] = df['stall_mem_diff'] / denom
-    df['total_mem_cycle_stall'] = df['stall_mem_diff'] + df['stalls_sb_diff']
-    df['total_mem_cycle_stall_ratio'] = df['total_mem_cycle_stall'] / denom
+    if not args.use_hit_counts:
+        df['load_mem_cycle_stall_ratio'] = df['c3_diff'] / denom
+        df['total_mem_cycle_stall'] = df['c3_diff'] + df['c4_diff']
+        df['total_mem_cycle_stall_ratio'] = df['total_mem_cycle_stall'] / denom
     df['total_instruction_ratio'] = df['inst_retire_diff'] / denom
 
     preferred_cols = [
         'start_ts', 'end_ts', 'duration_ms',
-        'stall_mem_diff', 'stalls_sb_diff', 'cpu_unhalt_diff',
+        f'{c3_name}_diff', f'{c4_name}_diff', 'cpu_unhalt_diff',
         'inst_retire_diff',
         'c1_diff', f'{c1_name}_diff',
         'c2_diff', f'{c2_name}_diff',
         'total_transferred_MB'
     ]
-    if 'imc_read_diff' in df.columns and 'imc_write_diff' in df.columns:
+    if args.use_imc:
         preferred_cols += ['imc_read_diff', 'imc_write_diff', 'imc_total_transferred_MB']
 
     preferred_cols += [
@@ -197,6 +245,7 @@ def main():
     if args.use_imc: print("Using IMC")
     if args.use_offcore: print("Using offcore")
     if args.use_write_est: print("Using write estimate")
+    if args.use_hit_counts: print("Using hit counts")
 
     file_path = args.bin_path
     results = parse_hrp_instructed_profile(file_path)
